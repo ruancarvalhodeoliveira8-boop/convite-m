@@ -65,23 +65,21 @@
         const perg = document.getElementById("pergunta-screen");
         const overlay = document.getElementById("overlay");
 
-        function iniciar() {
-            // Garante que o navegador tente tocar os arquivos
-            m.play().then(() => {
-                console.log("Áudio tocando");
-            }).catch(e => console.log("Erro áudio:", e));
+        let jaRespondeu = false; // NOVA TRAVA PARA NÃO REPETIR A PERGUNTA
 
+        function iniciar() {
+            m.play().catch(e => console.log("Erro áudio:", e));
             v.play().then(() => {
-                console.log("Vídeo tocando");
                 overlay.style.display = "none";
                 card.style.display = "block";
             }).catch(e => {
-                alert("Erro ao carregar vídeo. Verifique se o nome do arquivo no GitHub é video1.mp4");
+                alert("Erro ao carregar vídeo. Verifique se o nome é video1.mp4");
             });
         }
 
         v.ontimeupdate = () => {
-            if (v.currentTime >= 18.9) {
+            // Só para o vídeo se ainda não tiver respondido
+            if (v.currentTime >= 18.9 && !jaRespondeu) {
                 v.pause();
                 card.style.display = "none";
                 perg.style.display = "flex";
@@ -90,10 +88,11 @@
 
         function responder(sim) {
             if(sim) {
+                jaRespondeu = true; // Ativa a trava para o vídeo seguir direto
                 perg.style.display = "none";
                 card.style.display = "block";
                 document.getElementById("txt-card").innerText = "Te amo! ❤️";
-                v.play();
+                v.play(); // O vídeo continua agora sem travar
             } else {
                 alert("Você sempre será especial! ❤️");
             }
