@@ -15,7 +15,6 @@
       min-height: 100vh;
     }
 
-    /* Tela de Início */
     #overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: #fdfcfb;
@@ -24,9 +23,10 @@
     }
 
     .btn-start {
-      padding: 20px 40px; font-family: 'Great Vibes', cursive;
-      font-size: 2rem; background: #7a8f4f; color: white;
+      padding: 18px 35px; font-family: 'Great Vibes', cursive;
+      font-size: 1.8rem; background: #7a8f4f; color: white;
       border: none; border-radius: 50px; cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
 
     .card {
@@ -36,18 +36,18 @@
       border: 1px solid #d4af37;
     }
 
-    video { width: 100%; display: block; background: #000; }
+    .video-box { width: 100%; background: #000; line-height: 0; }
+    video { width: 100%; display: block; }
 
     .content { padding: 20px; }
-
     h1 { font-family: 'Great Vibes', cursive; color: #7a8f4f; font-size: 2.5rem; margin: 10px 0; }
-    p { color: #888; font-size: 0.8rem; letter-spacing: 1px; }
+    p { color: #888; font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 15px; }
 
     .buttons { display: none; gap: 10px; justify-content: center; margin-top: 15px; }
     
     button.opt {
-      padding: 10px 25px; border-radius: 50px; border: none;
-      cursor: pointer; font-weight: 600;
+      padding: 12px 25px; border-radius: 50px; border: none;
+      cursor: pointer; font-weight: 600; transition: 0.3s;
     }
     .sim { background: #7a8f4f; color: white; }
     .nao { background: #eee; color: #777; }
@@ -60,15 +60,16 @@
   </audio>
 
   <div id="overlay">
-    <h1 style="color:#555">Para Minha Mãe...</h1>
+    <h1 style="color:#555; margin-bottom: 20px;">Para Minha Mãe...</h1>
     <button class="btn-start" onclick="iniciar()">Abrir Convite ❤️</button>
   </div>
 
   <div class="card">
-    <video id="videoMain" playsinline muted preload="auto">
-      <source src="video1.mp4" type="video/mp4">
-      Seu navegador não suporta vídeos.
-    </video>
+    <div class="video-box">
+      <video id="videoMain" playsinline muted preload="auto">
+        <source src="video1.mp4" type="video/mp4">
+      </video>
+    </div>
 
     <div class="content">
       <h1 id="titulo">Mãe</h1>
@@ -88,41 +89,43 @@
     const titulo = document.getElementById("titulo");
     const subtitulo = document.getElementById("subtitulo");
 
-    let travou = false;
+    let jaPausou = false;
 
     function iniciar() {
-      // Remove a tela de início
       document.getElementById("overlay").style.display = "none";
       
-      // Tenta tocar os dois
-      musica.play();
-      video.play();
+      // Força o play no vídeo e áudio
+      musica.play().catch(e => console.log("Áudio pendente"));
+      video.play().catch(e => console.log("Vídeo pendente"));
     }
 
     video.addEventListener('timeupdate', function() {
-      // Pausa aos 18.8 segundos
-      if (video.currentTime >= 18.8 && !travou) {
+      // Pausa exatamente aos 18.8 segundos
+      if (video.currentTime >= 18.8 && !jaPausou) {
         video.pause();
-        travou = true;
+        jaPausou = true;
         areaBotoes.style.display = "flex";
         titulo.innerText = "Você aceita?";
-        subtitulo.innerText = "Escolha uma opção abaixo";
+        subtitulo.innerText = "Escolha sua resposta";
       }
     });
 
     function aceitar() {
       areaBotoes.style.display = "none";
       titulo.innerText = "Te amo! ❤️";
+      subtitulo.innerText = "O vídeo continua...";
       video.play();
     }
 
     function recusar() {
       areaBotoes.style.display = "none";
       titulo.innerText = "Poxa... 🥺";
+      subtitulo.innerText = "Você é tudo para mim.";
     }
 
     video.onended = () => {
       titulo.innerText = "Para Sempre ❤️";
+      subtitulo.innerText = "Nos vemos no grande dia!";
     };
   </script>
 </body>
