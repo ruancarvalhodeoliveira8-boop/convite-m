@@ -4,79 +4,126 @@
   <meta charset="UTF-8">
   <title>Para Minha Mãe 💚</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    :root {
-      --primary-color: #7a8f4f;
-      --gold: #d4af37;
-      --bg: #fdfcfb;
-    }
-
     body {
       margin: 0; padding: 0;
-      background-color: var(--bg);
+      background-color: #fdfcfb;
       font-family: 'Montserrat', sans-serif;
       display: flex; justify-content: center; align-items: center;
-      min-height: 100vh; overflow: hidden;
+      min-height: 100vh;
     }
 
+    /* Tela de Início */
     #overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: var(--bg);
+      background: #fdfcfb;
       display: flex; flex-direction: column; justify-content: center; align-items: center;
-      z-index: 100; transition: opacity 0.5s ease;
+      z-index: 100;
     }
 
     .btn-start {
       padding: 20px 40px; font-family: 'Great Vibes', cursive;
-      font-size: 2.2rem; background: var(--primary-color); color: white;
+      font-size: 2rem; background: #7a8f4f; color: white;
       border: none; border-radius: 50px; cursor: pointer;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     }
 
     .card {
-      width: 85%; max-width: 380px; background: white;
-      border-radius: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      width: 90%; max-width: 380px; background: white;
+      border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
       overflow: hidden; text-align: center;
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      padding-bottom: 20px;
+      border: 1px solid #d4af37;
     }
 
-    .video-box {
-      width: 100%; background: #000;
-      line-height: 0; border-bottom: 3px solid var(--gold);
+    video { width: 100%; display: block; background: #000; }
+
+    .content { padding: 20px; }
+
+    h1 { font-family: 'Great Vibes', cursive; color: #7a8f4f; font-size: 2.5rem; margin: 10px 0; }
+    p { color: #888; font-size: 0.8rem; letter-spacing: 1px; }
+
+    .buttons { display: none; gap: 10px; justify-content: center; margin-top: 15px; }
+    
+    button.opt {
+      padding: 10px 25px; border-radius: 50px; border: none;
+      cursor: pointer; font-weight: 600;
     }
-
-    video { width: 100%; display: block; }
-
-    h1 {
-      font-family: 'Great Vibes', cursive; color: var(--primary-color);
-      font-size: 2.5rem; margin: 20px 0 5px;
-    }
-
-    p { color: #888; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
-
-    .buttons {
-      display: none; gap: 15px; justify-content: center;
-      padding: 0 20px;
-    }
-
-    button {
-      padding: 12px 30px; border-radius: 50px; border: none;
-      cursor: pointer; font-weight: 600; transition: 0.3s;
-    }
-
-    .sim { background: var(--primary-color); color: white; box-shadow: 0 5px 15px rgba(122, 143, 79, 0.3); }
-    .nao { background: #f0f0f0; color: #999; }
+    .sim { background: #7a8f4f; color: white; }
+    .nao { background: #eee; color: #777; }
   </style>
 </head>
 <body>
 
-  <audio id="musicaFundo" loop>
+  <audio id="musicaFundo" preload="auto" loop>
     <source src="musica1.mp3" type="audio/mpeg">
   </audio>
 
   <div id="overlay">
-    <h1 style="margin-bottom: 20px; color: #555;">Para Minha Mãe...</h1>
+    <h1 style="color:#555">Para Minha Mãe...</h1>
     <button class="btn-start" onclick="iniciar()">Abrir Convite ❤️</button>
+  </div>
+
+  <div class="card">
+    <video id="videoMain" playsinline muted preload="auto">
+      <source src="video1.mp4" type="video/mp4">
+      Seu navegador não suporta vídeos.
+    </video>
+
+    <div class="content">
+      <h1 id="titulo">Mãe</h1>
+      <p id="subtitulo">Assista até o fim</p>
+
+      <div class="buttons" id="areaBotoes">
+        <button class="opt sim" onclick="aceitar()">SIM ❤️</button>
+        <button class="opt nao" onclick="recusar()">NÃO</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById("videoMain");
+    const musica = document.getElementById("musicaFundo");
+    const areaBotoes = document.getElementById("areaBotoes");
+    const titulo = document.getElementById("titulo");
+    const subtitulo = document.getElementById("subtitulo");
+
+    let travou = false;
+
+    function iniciar() {
+      // Remove a tela de início
+      document.getElementById("overlay").style.display = "none";
+      
+      // Tenta tocar os dois
+      musica.play();
+      video.play();
+    }
+
+    video.addEventListener('timeupdate', function() {
+      // Pausa aos 18.8 segundos
+      if (video.currentTime >= 18.8 && !travou) {
+        video.pause();
+        travou = true;
+        areaBotoes.style.display = "flex";
+        titulo.innerText = "Você aceita?";
+        subtitulo.innerText = "Escolha uma opção abaixo";
+      }
+    });
+
+    function aceitar() {
+      areaBotoes.style.display = "none";
+      titulo.innerText = "Te amo! ❤️";
+      video.play();
+    }
+
+    function recusar() {
+      areaBotoes.style.display = "none";
+      titulo.innerText = "Poxa... 🥺";
+    }
+
+    video.onended = () => {
+      titulo.innerText = "Para Sempre ❤️";
+    };
+  </script>
+</body>
+</html>
